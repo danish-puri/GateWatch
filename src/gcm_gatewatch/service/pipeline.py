@@ -15,8 +15,8 @@ Ties the pieces together. Per camera stream, each frame flows:
 Both kinds of subject ride that one path. A student walking in and a bus driving in are
 the same geometry problem, and the detector's class id decides which kind gets written.
 
-Runs the monitor and watchdog agents on their intervals alongside, and launches the
-FastAPI service. This is `gcm-gatewatch` (see [project.scripts]); it replaces v1's two
+Launches the FastAPI service alongside. The monitor and watchdog agents are planned to
+run here on their own intervals, but they are not built yet. This is `gcm-gatewatch` (see [project.scripts]); it replaces v1's two
 ad-hoc scripts with one supervised, headless process.
 """
 
@@ -103,7 +103,7 @@ class StreamWorker:
         )
         self.stream: ReconnectingStream | None = None
 
-        # health signals, read by /healthz and the watchdog
+        # health signals, read by /healthz
         self.frames_seen = 0
         self.detections_run = 0
         self.crossings_written = 0
@@ -290,7 +290,7 @@ class StreamWorker:
 
 
 class Pipeline:
-    """Owns the capture -> perception -> storage loop and the background agents."""
+    """Owns the capture -> perception -> storage loop."""
 
     # A stream that has delivered nothing for this long is presumed broken, even though
     # the reconnect logic keeps trying. It is what /healthz reports on.
@@ -363,7 +363,7 @@ class Pipeline:
         log.info("pipeline_stopped")
 
     def health(self) -> dict:
-        """Current health signals for the watchdog and /healthz.
+        """Current health signals for /healthz.
 
         Unhealthy means a stream has gone quiet past STALE_FRAME_SECONDS, or has never
         produced a frame at all. A gate with no crossings is not unhealthy, since a quiet

@@ -1,5 +1,7 @@
 """MCP server exposing gate data as tools.
 
+Planned, not implemented yet.
+
 Publishes the gate log's read queries over the Model Context Protocol so any MCP client
 (Claude apps, other agents) can ask about GCM gate traffic without going through our
 HTTP API. Wraps the same repository the analyst agent uses.

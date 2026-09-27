@@ -1,5 +1,7 @@
 """Shared tool surface for the agents.
 
+Planned, not implemented yet.
+
 These are the typed functions the Claude agents may call, defined with the Anthropic
 SDK's `@beta_tool` decorator and driven by `client.beta.messages.tool_runner`. The agent
 loop runs on our own server (no GPU, no external sandbox), which suits an unsupervised

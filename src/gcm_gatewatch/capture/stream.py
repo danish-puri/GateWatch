@@ -64,7 +64,7 @@ class ReconnectingStream:
         self._sleep = sleep
         self._capture = None
         self._closed = False
-        # counters the watchdog and /healthz read
+        # counters /healthz reads
         self.frames_read = 0
         self.reconnects = 0
 

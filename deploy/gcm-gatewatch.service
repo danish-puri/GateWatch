@@ -1,13 +1,13 @@
 # systemd unit for unsupervised operation.
 # This is how v2 actually "runs for hours on a server without anyone supervising it":
-# systemd restarts it if it ever exits, and the in-process watchdog agent handles the
-# softer failures (dropped camera, stalled stage).
+# systemd restarts it if it ever exits, and the capture layer reconnects dropped cameras
+# on its own. A watchdog agent for stalled stages is planned but not built yet.
 #
 # Install: copy to /etc/systemd/system/, then
 #   systemctl daemon-reload && systemctl enable --now gcm-gatewatch
 
 [Unit]
-Description=GCM GateWatch - agentic vehicle-gate intelligence
+Description=GCM GateWatch - gate crossing log from live CCTV
 After=network-online.target
 Wants=network-online.target
 

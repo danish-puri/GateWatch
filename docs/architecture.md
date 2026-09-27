@@ -3,9 +3,9 @@
 ## Purpose
 
 Log vehicle entry and exit at Gate 1 of Global College of Management (Baneshwor,
-Kathmandu) from two UNV CCTV cameras, and put an agentic AI layer on top that can answer
-questions about the traffic, notice when something is off, and keep itself running with
-no one watching.
+Kathmandu) from two UNV CCTV cameras. The next step is an agentic AI layer on top that
+can answer questions about the traffic, notice when something is off, and keep itself
+running with no one watching. That layer is designed but not built yet.
 
 Constraints that shape everything: **CPU only** (no GPU at GCM), and it must run for long
 stretches unsupervised on a server.
@@ -13,7 +13,7 @@ stretches unsupervised on a server.
 ## Two layers
 
 ```
-                         ┌─────────────────── agentic AI layer (Claude) ───────────────────┐
+                         ┌────────────── agentic AI layer (Claude, planned) ───────────────┐
                          │  analyst agent      monitor agent        watchdog agent          │
                          │  (NL questions)     (anomaly detection)  (self-healing)          │
                          │        └──────────────── shared tools ──────────┘                │
@@ -36,9 +36,16 @@ stretches unsupervised on a server.
 3. **storage** — each crossing is recorded and paired into a **visit** (an entry and its
    later exit) in SQLite, with real timestamps and indices.
 
-### Agentic AI layer (the new part, the focus of v2)
+### Agentic AI layer (planned, not built yet)
 
-Built on the Anthropic Claude API with the SDK's tool runner. The agent loop runs on our
+The capture, perception, and storage layers and the HTTP API run today. The agents below
+are only designed so far. `agents/` holds their interfaces, every one of them raises
+`NotImplementedError`, and the pipeline does not start them. `POST /ask` returns 503
+until the analyst exists. Until the watchdog exists, what keeps GateWatch running
+unattended is systemd's `Restart=always` plus the capture layer reconnecting on its own
+when a camera drops.
+
+The plan is to build it on the Anthropic Claude API with the SDK's tool runner. The agent loop runs on our
 own server — no GPU and no external sandbox — which fits an unsupervised on-prem box.
 
 **Split of responsibilities: Claude is the brain, Google Cloud Vision is the eyes.**
@@ -47,16 +54,16 @@ image-understanding call (OCR + frame analysis) goes through Google Cloud Vision
 returns labels, objects, and detected text (including Nepali/Devanagari script). No
 vision-capable LLM is used for the pixels.
 
-- **Analyst agent** (Opus 4.8) — answers natural-language questions over the log, exposed
-  via `POST /ask` and optionally over MCP.
-- **Monitor agent** (Haiku 4.5, escalates to Opus 4.8) — on an interval, reviews recent
-  activity and a Google Cloud Vision analysis of the current frame (the `inspect_frame`
-  tool) and raises an alert only when a human should look: an exit with no matching
-  entry, an after-hours entry, loitering, a spike.
-- **Watchdog agent** (Haiku 4.5) — supervises the pipeline's own health and self-heals or
-  alerts. This is what makes "runs unsupervised" real.
+- **Analyst agent** (Opus 4.8) will answer natural-language questions over the log,
+  exposed via `POST /ask` and optionally over MCP.
+- **Monitor agent** (Haiku 4.5, escalating to Opus 4.8) will review recent activity on an
+  interval, along with a Google Cloud Vision analysis of the current frame (the
+  `inspect_frame` tool), and raise an alert only when a human should look. That means an
+  exit with no matching entry, an after-hours entry, loitering, or a spike.
+- **Watchdog agent** (Haiku 4.5) will supervise the pipeline's own health and self-heal
+  or alert, using the signals `/healthz` already reports.
 
-All three draw from one shared tool surface (`agents/tools.py`) so behaviour is
+All three will draw from one shared tool surface (`agents/tools.py`) so behaviour is
 consistent and testable.
 
 ## Why not just v1 plus fixes
@@ -64,7 +71,7 @@ consistent and testable.
 v1 was a proof of concept: two scripts, hardcoded credentials, a display-bound Dash UI,
 an English-only OCR path that never actually read a Nepali plate, and no supervision of
 its own health. v2 keeps v1's good instincts (YOLO detection, line-crossing direction,
-SQLite logging) and rebuilds around modern, tested components plus the agentic layer.
+SQLite logging) and rebuilds around modern, tested components, with room for the agentic layer.
 
 ## On plates
 

@@ -10,12 +10,6 @@
   <img src="https://img.shields.io/badge/lint-ruff-261230" alt="Ruff">
 </p>
 
-<p align="center">
-  <a href="docs/media/demo.mp4"><img src="docs/media/demo.gif" alt="The GateWatch dashboard tracking buses, vans, and people at the exit camera, with the gate line drawn across the frame" width="760"></a>
-  <br>
-  <sub>The dashboard on real exit camera footage. Click for the full 27 second clip.</sub>
-</p>
-
 I built GateWatch for Gate 1 of Global College of Management in Kathmandu, Nepal. Two existing UNV CCTV cameras watch the gate. GateWatch reads their RTSP streams, detects vehicles and people, works out whether each one is entering or leaving, and writes every crossing to a database that a small HTTP API serves.
 
 This is the second version. The first is [Bird](https://github.com/danish-puri/bird), a single script I ran in the field at two campuses and wrote a [case study](https://osf.io/6s7aw/files/9kch3) about. It had its counting line hardcoded for one camera angle, stopped for good when a stream dropped, needed a desktop window to run, and had no tests. I rebuilt it as one tested pipeline that is configured from files, keeps secrets in the environment, reconnects on its own when a camera drops, and runs under systemd or Docker.
@@ -60,7 +54,7 @@ So I turned plate reading off by default and worked out what a dedicated plate c
 
 The camera sees a person, not a named student. People are logged as anonymous crossings with a timestamp and a direction, and a CHECK constraint in the schema stops a plate from ever being attached to a person row. People are never paired into visits, because without a real identity source that pairing would invent arrivals that never happened.
 
-Apart from the short dashboard clip at the top, which is a low-resolution, colour-filtered recording, this repository contains no camera footage, frames, credentials, or network addresses. Plate strings in the tests are made up.
+This repository contains no camera footage, frames, credentials, or network addresses, because real people and plates are identifiable in the gate footage. Plate strings in the tests are made up.
 
 ## Running it
 

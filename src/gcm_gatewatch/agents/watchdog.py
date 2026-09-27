@@ -1,5 +1,7 @@
 """Watchdog agent: keeps the pipeline itself alive and healthy.
 
+Planned, not implemented yet.
+
 v1 was meant to run for hours unattended but had no supervision of its own health.
 The watchdog closes that gap. It reviews pipeline health signals -- last frame time per
 camera, per-stage heartbeats, disk headroom, error rates -- and either self-heals

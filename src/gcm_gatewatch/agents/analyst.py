@@ -1,5 +1,7 @@
 """Analyst agent: natural-language questions over the gate log.
 
+Planned, not implemented yet.
+
 Answers things like "how many buses came in today?", "when did that plate last enter?",
 or "summarize yesterday's traffic." Runs a Claude tool-use loop over the shared tool
 surface. Default model: Claude Opus 4.8.

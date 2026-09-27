@@ -1,5 +1,7 @@
 """Monitor agent: periodic anomaly detection over recent gate activity.
 
+Planned, not implemented yet.
+
 On an interval, reviews recent crossings and open visits (and, when useful, a Google
 Cloud Vision analysis of the current frame via the inspect_frame tool) and decides
 whether anything is off:

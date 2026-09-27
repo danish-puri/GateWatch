@@ -13,8 +13,9 @@ sudo systemctl enable --now gcm-gatewatch
 journalctl -u gcm-gatewatch -f     # follow logs
 ```
 
-`Restart=always` brings the process back if it exits; the in-process **watchdog agent**
-handles softer failures (a camera drops, a stage stalls) without a full restart.
+`Restart=always` brings the process back if it exits, and the capture layer reconnects on
+its own when a camera drops. A watchdog agent for softer failures, like a stalled stage, is
+planned but not built yet.
 
 ## Docker
 

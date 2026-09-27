@@ -1,11 +1,11 @@
 """FastAPI service.
 
 Headless replacement for v1's Dash dashboard (which required a display). Exposes:
-  - GET  /healthz            liveness/health for unattended operation & the watchdog
+  - GET  /healthz            liveness/health for unattended operation
   - GET  /stats              today's counts for vehicles and people, plus open visits
   - GET  /crossings          the recent entry/exit log
   - GET  /daily              per-day footfall and traffic from the v_daily_flow view
-  - POST /ask                natural-language question -> analyst agent answer
+  - POST /ask                natural-language question -> analyst agent (503 until it is built)
 
 A small optional web UI can be served from here later; the API is the contract.
 """
