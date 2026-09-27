@@ -18,7 +18,7 @@
 
 I built GateWatch for Gate 1 of Global College of Management in Kathmandu, Nepal. Two existing UNV CCTV cameras watch the gate. GateWatch reads their RTSP streams, detects vehicles and people, works out whether each one is entering or leaving, and writes every crossing to a database that a small HTTP API serves.
 
-This is the second version. The first was two scripts with hardcoded camera credentials, a hand-rolled tracker, and duplicated crossing logic that disagreed with itself. I rebuilt it as one tested pipeline that is configured from files, keeps secrets in the environment, reconnects on its own when a camera drops, and runs under systemd or Docker.
+This is the second version. The first is [Bird](https://github.com/danish-puri/bird), a single script I ran in the field at two campuses and wrote a [case study](https://osf.io/6s7aw/files/9kch3) about. It had its counting line hardcoded for one camera angle, stopped for good when a stream dropped, needed a desktop window to run, and had no tests. I rebuilt it as one tested pipeline that is configured from files, keeps secrets in the environment, reconnects on its own when a camera drops, and runs under systemd or Docker.
 
 ## How it works
 
