@@ -17,6 +17,9 @@ config/config.yaml
 *.png
 video/
 img/
+# the one published clip, a dashboard recording used in the README
+!docs/media/demo.gif
+!docs/media/demo.mp4
 captures/
 logs/
 

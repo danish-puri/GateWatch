@@ -10,6 +10,12 @@
   <img src="https://img.shields.io/badge/lint-ruff-261230" alt="Ruff">
 </p>
 
+<p align="center">
+  <a href="docs/media/demo.mp4"><img src="docs/media/demo.gif" alt="The GateWatch dashboard tracking buses, vans, and people at the exit camera, with the gate line drawn across the frame" width="760"></a>
+  <br>
+  <sub>The dashboard on real exit camera footage. Click for the full 27 second clip.</sub>
+</p>
+
 I built GateWatch for Gate 1 of Global College of Management in Kathmandu, Nepal. Two existing UNV CCTV cameras watch the gate. GateWatch reads their RTSP streams, detects vehicles and people, works out whether each one is entering or leaving, and writes every crossing to a database that a small HTTP API serves.
 
 This is the second version. The first was two scripts with hardcoded camera credentials, a hand-rolled tracker, and duplicated crossing logic that disagreed with itself. I rebuilt it as one tested pipeline that is configured from files, keeps secrets in the environment, reconnects on its own when a camera drops, and runs under systemd or Docker.
@@ -54,7 +60,7 @@ So I turned plate reading off by default and worked out what a dedicated plate c
 
 The camera sees a person, not a named student. People are logged as anonymous crossings with a timestamp and a direction, and a CHECK constraint in the schema stops a plate from ever being attached to a person row. People are never paired into visits, because without a real identity source that pairing would invent arrivals that never happened.
 
-This repository contains no camera footage, frames, credentials, or network addresses. Plate strings in the tests are made up.
+Apart from the short dashboard clip at the top, which is a low-resolution, colour-filtered recording, this repository contains no camera footage, frames, credentials, or network addresses. Plate strings in the tests are made up.
 
 ## Running it
 
