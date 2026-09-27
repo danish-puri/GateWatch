@@ -1,0 +1,101 @@
+# Copy to config/config.yaml and adjust. Secrets (RTSP creds, API keys) live in .env,
+# not here -- this file references them by env-var name so it is safe to commit.
+
+cameras:
+  # Each camera has one or more STREAMS, calibrated independently.
+  # The gate is a short ORIENTED line over the gate mouth (bottom-left), in normalized
+  # 0..1 coords. A track crossing toward `yard_point` = entry (IN); the other way = exit.
+  # `resolution` is what that stream delivers; live frames are aspect-checked against it,
+  # because a stream with a different crop (e.g. a 2:1 sub-stream vs a 16:9 main) needs
+  # its OWN gate -- normalized coords do not transfer across a different field of view.
+  # Recalibrate `line`/`yard_point` per stream on a live frame (docs/detection_tuning.md).
+  entry:
+    primary: main
+    streams:
+      main:
+        rtsp_env: GCM_ENTRY_CAM_RTSP      # real URL comes from .env
+        resolution: [2880, 1620]
+        gate:
+          line: [[0.12, 0.55], [0.16, 0.90]]
+          yard_point: [0.55, 0.45]
+  exit:
+    primary: main
+    streams:
+      main:
+        rtsp_env: GCM_EXIT_CAM_RTSP
+        resolution: [2880, 1620]
+        gate:
+          line: [[0.12, 0.55], [0.16, 0.90]]
+          yard_point: [0.55, 0.45]
+      # example of a second, separately-calibrated stream (different crop -> different gate)
+      # sub:
+      #   rtsp_env: GCM_EXIT_CAM_RTSP_SUB
+      #   resolution: [1195, 671]
+      #   gate:
+      #     line: [[0.12, 0.55], [0.16, 0.90]]
+      #     yard_point: [0.55, 0.45]
+
+perception:
+  model_path: models/yolo.pt          # gitignored; place weights here
+  # COCO ids 1, 2, 3, 5, 7 = bicycle, car, motorcycle, bus, truck
+  vehicle_classes: [1, 2, 3, 5, 7]
+  # COCO id 0 = person. People on foot are logged as kind='person' alongside vehicles,
+  # which is the student footfall side of the gate log. The detector reports a class and
+  # never an identity, so these rows are counted crossings and not named students.
+  # Set to [] to stop logging people.
+  person_classes: [0]
+  confidence: 0.4
+  # process every Nth frame to stay light on CPU (no GPU at GCM)
+  frame_stride: 3
+  # dwell/stationary filter: a track whose recent centroids spread less than
+  # motion_move_radius (normalized) over motion_window frames is "parked" and cannot
+  # produce a count -- keeps the depot's parked buses off the counter.
+  motion_window: 5
+  motion_move_radius: 0.02
+  # debounce: after a track crosses, ignore it for this many processed frames, so a
+  # bus turning/wobbling at the gate counts once, not several times.
+  crossing_cooldown: 40
+  # gate ROI: crop the gate region (padded by this fraction of the frame) and run the
+  # detector there at native resolution -- the gate is a tiny slice of a 2880-wide frame.
+  gate_roi_margin: 0.06
+  # motion gate: only run YOLO when the ROI shows motion; keep going a few frames after
+  # it stops so a vehicle pausing mid-gate isn't dropped. Big CPU saver on an idle yard.
+  motion_gate_min_foreground: 0.02
+  motion_gate_cooldown: 15
+  # fisheye: false = operate in distorted image space (Stage 1). Enable to undistort
+  # frames first once the lens is calibrated (Stage 2; see perception/dewarp.py).
+  dewarp_enabled: false
+  # Nepali vehicle types (tempo/auto/micro) are not COCO classes. With a fine-tuned
+  # model, map its class ids to labels here; leave empty to use the model's own names.
+  class_labels: {}   # e.g. {7: truck, 8: tempo, 9: microbus, 10: auto_rickshaw}
+
+# Google Cloud Vision is the image-understanding engine (OCR + frame analysis).
+# The service-account key path comes from GOOGLE_APPLICATION_CREDENTIALS in .env.
+vision:
+  credentials_env: GOOGLE_APPLICATION_CREDENTIALS
+  language_hints: [ne, hi, en]        # Nepali, Hindi, English scripts
+
+plate:
+  enabled: false                      # de-emphasized; current cameras can't resolve plates
+                                      # (see docs/feasibility.md). Flip on once a
+                                      # plate-grade camera exists; OCR runs via Cloud Vision.
+  min_confidence: 0.5
+
+storage:
+  db_path: gcm_gatewatch.db           # gitignored
+
+agents:
+  analyst_model: claude-opus-4-8      # natural-language questions over the log
+  monitor_model: claude-haiku-4-5     # cheap, high-frequency anomaly checks
+  escalation_model: claude-opus-4-8   # used when the monitor is unsure
+  monitor_interval_seconds: 300
+  # gate is open roughly these hours; entries outside are flagged
+  operating_hours: [6, 21]
+
+service:
+  host: 0.0.0.0
+  port: 8080
+
+logging:
+  level: INFO
+  json: true                          # structured logs for unattended operation

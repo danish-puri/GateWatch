@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GateWatch · Gate 1 Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="drift drift-violet"></div>
+  <div class="drift drift-cobalt"></div>
+  <div class="drift drift-teal"></div>
+</div>
+
+<div class="shell">
+
+  <header class="header">
+    <div class="wordmark">
+      <div class="mark" aria-hidden="true"><i></i><i></i><i></i></div>
+      <span class="brand">GateWatch</span>
+      <span class="rule"></span>
+      <span class="place">Gate 1 · Global College of Management</span>
+    </div>
+    <div class="status" id="status">
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-label" id="status-label">Live</span>
+      <span class="mono status-clock" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <div class="row-main">
+
+    <section class="panel camera-panel">
+      <div class="stage" id="stage">
+        <video id="feed" poster="assets/gate-exit.jpg" muted autoplay loop playsinline
+               preload="auto" aria-label="Exit camera at Gate 1">
+          <source src="assets/gate-exit.mp4" type="video/mp4" />
+        </video>
+        <!-- The counting line lives in the same 0-100 space as the detection
+             boxes, so what you see is exactly what the crossing test uses. -->
+        <svg class="gate-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="gateGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#D4245E" stop-opacity="0" />
+              <stop offset="22%"  stop-color="#D4245E" stop-opacity="1" />
+              <stop offset="75%"  stop-color="#FF7BA6" stop-opacity="1" />
+              <stop offset="100%" stop-color="#FF7BA6" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <line id="gate-line" x1="0" y1="66" x2="66" y2="84"
+                stroke="url(#gateGrad)" stroke-width="4"
+                stroke-linecap="round" vector-effect="non-scaling-stroke" />
+        </svg>
+        <div class="gate-tag mono">GATE LINE</div>
+        <div class="dets" id="dets"></div>
+        <div class="emitters" id="emitters" aria-hidden="true"></div>
+      </div>
+      <div class="panel-footer">
+        <div class="cam-id">
+          <span class="dot dot-teal"></span>
+          <strong>Exit camera</strong>
+          <span class="mono meta" id="cam-meta">2880×1620 · 25 fps · YOLO v26</span>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </section>
+
+    <aside class="rail">
+      <div class="hero">
+        <div class="hero-orb" aria-hidden="true"></div>
+        <div class="hero-label">INSIDE NOW</div>
+        <div class="hero-value" id="inside-now">0</div>
+        <div class="hero-sub">vehicles on campus right now</div>
+      </div>
+
+      <div class="panel tally">
+        <div class="card-head">
+          <span class="label">CROSSINGS TODAY</span>
+          <span class="head-figure"><strong id="total-today">0</strong> <em>since 06:00</em></span>
+        </div>
+        <div class="equalizer" id="equalizer"></div>
+      </div>
+
+      <div class="panel health" id="health">
+        <div class="cam-id">
+          <span class="dot dot-mint" id="health-dot"></span>
+          <span id="health-text">Both cameras healthy</span>
+        </div>
+        <span class="mono meta" id="health-meta">last write 0s ago</span>
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="row-bottom">
+
+    <section class="panel crossings">
+      <div class="card-head">
+        <span class="label">RECENT CROSSINGS</span>
+        <span class="pill-live"><span class="dot dot-cobalt"></span>Streaming</span>
+      </div>
+      <div class="rows" id="rows"></div>
+    </section>
+
+    <section class="panel dayflow">
+      <div class="card-head">
+        <span class="label">THROUGH THE DAY</span>
+        <span class="peak" id="peak-label">peak 08–10</span>
+      </div>
+      <div class="dotfield" id="dotfield"></div>
+      <div class="houraxis" id="houraxis"></div>
+    </section>
+
+  </div>
+
+</div>
+
+<nav class="bottom-nav" aria-label="Primary">
+  <button class="nav-btn is-active" type="button"><span class="dot dot-mint"></span>Live</button>
+  <button class="nav-btn" type="button">Log</button>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+[project]
+name = "gcm-gatewatch"
+version = "0.1.0"
+description = "Real-time vehicle and footfall logging from live CCTV at a college gate"
+requires-python = ">=3.12"
+dependencies = [
+    # perception
+    "ultralytics>=8.4",          # YOLO detection
+    "supervision>=0.25",         # ByteTrack tracking + LineZone crossing
+    "opencv-python-headless>=4.10", # headless: no GUI/display needed on the server
+    "numpy>=2.0",
+    # agentic AI layer
+    "anthropic>=0.69",           # Claude API + tool runner (the agent "brain")
+    # vision: OCR (Nepali/Devanagari plates) + frame image analysis
+    "google-cloud-vision>=3.8",  # the "eyes"; replaces v1's EasyOCR
+    # service + config + ops
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",    # config from YAML + .env, secrets never in source
+    "structlog>=24.4",           # structured logging
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+gcm-gatewatch = "gcm_gatewatch.service.pipeline:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.7",
+    "mypy>=1.13",
+    "pre-commit>=4.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gcm_gatewatch"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.mypy]
+python_version = "3.12"
+packages = ["gcm_gatewatch"]
+mypy_path = "src"

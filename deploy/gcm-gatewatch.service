@@ -1,0 +1,26 @@
+# systemd unit for unsupervised operation.
+# This is how v2 actually "runs for hours on a server without anyone supervising it":
+# systemd restarts it if it ever exits, and the in-process watchdog agent handles the
+# softer failures (dropped camera, stalled stage).
+#
+# Install: copy to /etc/systemd/system/, then
+#   systemctl daemon-reload && systemctl enable --now gcm-gatewatch
+
+[Unit]
+Description=GCM GateWatch - agentic vehicle-gate intelligence
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/gcm-gatewatch
+EnvironmentFile=/opt/gcm-gatewatch/.env
+ExecStart=/usr/local/bin/uv run gcm-gatewatch
+Restart=always
+RestartSec=5
+# don't spin forever on a hard crash loop
+StartLimitIntervalSec=300
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target

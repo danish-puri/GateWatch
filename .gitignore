@@ -1,0 +1,33 @@
+# secrets & local config
+.env
+config/config.yaml
+
+# model weights (large binaries, fetched/trained out of band)
+*.pt
+*.onnx
+
+# data & runtime artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.csv
+*.mp4
+# real camera footage and frames are never published (people and plates are identifiable)
+*.jpg
+*.png
+video/
+img/
+captures/
+logs/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# os
+.DS_Store
