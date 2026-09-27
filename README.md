@@ -103,15 +103,6 @@ The suite runs offline, with fake capture sources and in-memory SQLite. It cover
 | `docs/` | architecture, feasibility study, tuning notes, camera placement |
 | `deploy/` | Dockerfile and systemd unit |
 
-## Status and next steps
 
-The gate log runs end to end on recorded footage. Capture, perception, storage, and the HTTP service are implemented and tested.
-
-Still to do
-
-- **An agent layer on top of the log.** The interfaces are in `agents/`. An analyst would answer plain-language questions through `POST /ask`, a monitor would flag after-hours entries and exits with no matching entry, and a watchdog would restart stalled stages. None of these are implemented yet, so `/ask` is not live.
-- **Connecting the dashboard to the live API.** It currently replays recorded detections.
-- **Fisheye correction.** Detection works in the distorted image for now. `perception/dewarp.py` is where undistortion goes once the lens is calibrated.
-- **Plate OCR**, once a camera that can resolve plates is installed.
 
 More on the design is in [docs/architecture.md](docs/architecture.md).
